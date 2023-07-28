@@ -1,0 +1,53 @@
+
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+writeJson("C:\\Users\\Luca Frangiamore\\Documents\\WriteLines.txt");
+
+foreach ((string a,string b) in getJson("C:\\Users\\Luca Frangiamore\\Documents\\WriteLines.txt", 1))
+    Console.WriteLine(a+","+b);
+
+IEnumerable<(string,string)> getJson(string url, int i)
+{
+    StreamReader stream = new StreamReader(url);
+    string s = stream.ReadToEnd();
+    List<persone> ps = JsonSerializer.Deserialize<List<persone>>(s);
+    IEnumerable<persone> r = (from p in ps
+                              where ((int)p.id == i)
+                              select p);
+    IEnumerable<(string,string)> r2 = ps.Where(x => (x.id == i)).Select(x=>(x.cognome,x.nome));
+    return r2;
+
+}
+void writeJson(string url)
+{
+    List<persone> ps = new List<persone>();
+    ps.Add(new persone(1, "luca", "frangiamore"));
+    ps.Add(new persone(2, "pino", "gian"));
+    ps.Add(new persone(1, "fff", "fr4343434343angiamore"));
+
+
+
+    using (StreamWriter outputFile = new StreamWriter(Path.Combine(url)))
+
+        outputFile.WriteLine(JsonSerializer.Serialize<List<persone>>(ps));
+
+
+}
+public class persone
+{
+    public int id { get; set; }
+    public string nome { get; set; }
+    public string cognome { get; set; }
+    public persone(int id, string nome, string cognome)
+    {
+        this.id = id;
+        this.nome = nome;
+        this.cognome = cognome;
+    }
+    public override string ToString()
+    {
+        return $"nome: {nome},cognome {cognome}, id{id}";
+    }
+}
